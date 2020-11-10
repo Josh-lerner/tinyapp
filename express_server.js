@@ -53,13 +53,22 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-app.post('/urls/:shortURL/delete', (req, res) =>{
-console.log(req.params.shortURL);
-delete urlDatabase[req.params.shortURL];
-console.log(urlDatabase)
-res.redirect(`/urls/`);
-})    
- 
+app.post('/urls/:shortURL/delete', (req, res) => {
+  delete urlDatabase[req.params.shortURL];
+  console.log(urlDatabase)
+  res.redirect(`/urls/`);
+})
+
+app.post('/urls/:shortURL', (req, res) => {
+  const shortUrl = (req.params.shortURL)
+ //  console.log(urlDatabase)
+  urlDatabase[shortUrl] = req.body.longURL; // from urls_show.. get name from input field/form 
+ // console.log(urlDatabase)
+   res.redirect(`/urls/${shortUrl}`);
+})
+
+
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
