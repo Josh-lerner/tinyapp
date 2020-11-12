@@ -8,10 +8,7 @@ let random = function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
 };
 
-const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
-};
+const urlDatabase = {};
 
 const users = {
   "userRandomID": {
@@ -28,6 +25,14 @@ const users = {
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
+
+const cookieExist = function(cookie, users) {
+  for (const user in users) {
+    if (cookie === user) {
+      return true;
+    }
+  } return false;
+};
 
 // register adds a new user to user db, saves id, email and password, stores email as a cookie, redirects home
 // if email exists send 400 code
@@ -80,16 +85,19 @@ app.post('/login', (req, res) => {
 })
 
 app.post("/urls", (req, res) => {
-  let longUrl = req.body.longURL;  // Log the POST request body to the console;
-  let shortUrl = random();
-  urlDatabase[shortUrl] = longUrl;
-  res.redirect(`/urls/${shortUrl}`);
+  let shortURL = random();
+  urlDatabase[shortURL] = {
+    longURL: req.body.longURL,
+    userID: req.cookies["user_id"],
+  };
+  // console.log(urlDatabase)
+  res.redirect(`/urls/${shortURL}`);
 
 });
 
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);  // must include http
 });
 
@@ -120,10 +128,14 @@ app.get("/urls", (req, res) => {
 
 // the add new page rendered from urls_new
 app.get("/urls/new", (req, res) => {
+  if (!cookieExist(req.cookies["user_id"], users)){
+    res.redirect("/login");
+  } else {
   const templateVars = {
     user_id: req.cookies["user_id"]
   };
   res.render("urls_new", templateVars);
+}
 });
 
 // the page for specific short urls, rendered from urls_show
