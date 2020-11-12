@@ -1,12 +1,26 @@
 const express = require("express");
 var cookieParser = require('cookie-parser')
+const bcrypt = require('bcrypt');
 const app = express();
 app.use(cookieParser());
 const PORT = 8080; // default port 8080
 
+
+
 let random = function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
 };
+
+const urlsForUser = function(id, urlDatabase) {
+  const userUrls = {};
+  for (const shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      userUrls[shortURL] = urlDatabase[shortURL];
+    }
+  }
+  return userUrls;
+};
+
 
 const urlDatabase = {};
 
@@ -52,11 +66,11 @@ app.post("/register", (req, res) => {
   const newUser = {
     id: id,
     email: email,
-    password: password
+    password: bcrypt.hashSync(req.body.password, 10)
   }
   users[id] = newUser;
   // if r.b.email === users.user.email
-  // console.log(users)
+   console.log(users)
   res.redirect(`/login`)
 })
 
@@ -68,10 +82,8 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   let regUser = false
   for (const user in users) {
-    // console.log(req.body.email, 'req')
-    // console.log(users[user].email, 'user')
     if (req.body.email === users[user].email) {
-      if (req.body.password === users[user].password) {
+      if (bcrypt.compareSync(req.body.password, users[user].password)) {
         regUser = true
         res.cookie('user_id', users[user].id);
       }
