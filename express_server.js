@@ -82,7 +82,7 @@ app.post("/urls", (req, res) => {
       res.redirect(`/urls/${newShort}`);
     }
   } else {
-    res.status(403).send("Oops");
+    res.status(404).send("Error");
   }
 });
 
@@ -104,7 +104,7 @@ app.get('/u/:shortURL', (req, res) => {
     const longURL = urlDatabase[shortURL].longURL;
     res.redirect(longURL);
   } else {
-    res.status(404).send("uhoh 94");
+    res.status(404).send("error!");
   }
 });
 
@@ -140,7 +140,7 @@ app.post('/urls/:shortURL/', (req, res) => {
       res.redirect('/urls');
     }
   }
-  res.status(404).send("uhoh 134");
+  res.status(404).send("error");
 });
 // Delete an item from the db, only works if right client is logged in, otherwise send error message
 app.post('/urls/:shortURL/delete', (req, res) => {
