@@ -4,13 +4,13 @@ const express = require("express");
 const app = express();
 app.set("view engine", "ejs");
 
-const cookieSession = require('cookie-session')
+const cookieSession = require('cookie-session');
 app.use(cookieSession({
   name: 'session',
   keys: ['go', 'habs'],
-}))
+}));
 
-const { getUserByEmail, addNewUser, authenticateUser, getUserUrls, getUrl, addNewUrl } = require('./helpers')
+const { getUserByEmail, addNewUser, authenticateUser, getUserUrls, getUrl, addNewUrl } = require('./helpers');
 const urlDatabase = {};
 const users = {};
 
@@ -20,41 +20,40 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // render the register page
 app.get("/register", (req, res) => {
-  res.render("register")
-})
-
-// getUserByEmail checks DB to see if user exists. addNewUser adds the new user to DB, 
+  res.render("register");
+});
+// getUserByEmail checks DB to see if user exists. addNewUser adds the new user to DB
 // if email exists send 400 code
 app.post("/register", (req, res) => {
   let { email, password } = req.body;
   const newUser = getUserByEmail(email, users);
   if (!newUser) {
     req.session['user_id'] = addNewUser(email, password, users); // sets cookie
-    return res.redirect(`/login`)
+    return res.redirect(`/login`);
   }
-  res.status(403).send("That email is already in use")
-})
-// render the login page
+  res.status(403).send("That email is already in use");
+});
+// render the login page;
 app.get('/login', (req, res) => {
-  res.render("login")
-})
+  res.render("login");
+});
 
-// getting login & cookie info not working at top when logged in
+// getting login & cookie info not working at top when logged in;
 app.post('/login', (req, res) => {
   let { email, password } = req.body;
   let newUser = authenticateUser(email, password, users);
   if (newUser) {
     req.session['user_id'] = newUser.id;
-    console.log(newUser.id)
+    console.log(newUser.id);
     res.redirect(`/urls`);
   } else {
-    res.status(403).send("Wrong credentials")
+    res.status(403).send("Wrong credentials");
   }
-})
+});
 
 // redirect so urls is homepage
 app.get("/", (req, res) => {
-  res.redirect(`/urls`)
+  res.redirect(`/urls`);
 });
 
 // renders urls_index if client is logged in otherwise sends error
@@ -68,7 +67,7 @@ app.get("/urls", (req, res) => {
     user: user
   };
   if (!user) {
-    res.status(403).send("Error, please go register at /register, or sign in at /login")
+    res.status(403).send("Error, please go register at /register, or sign in at /login");
   } else {
     res.render("urls_index", templateVars);
   }
@@ -76,21 +75,21 @@ app.get("/urls", (req, res) => {
 
 // uses addNewUrl function and then adds a random shorturl tied to an inputed long url into url database otherwise sends error message
 app.post("/urls", (req, res) => {
-  const newId = req.session['user_id']; 
+  const newId = req.session['user_id'];
   const longURL = req.body.longURL;
   if (Object.keys(users).includes(newId)) {
     if (longURL) {
       const newShort = addNewUrl(longURL, newId, urlDatabase);
       res.redirect(`/urls/${newShort}`);
-    } 
-    }else {
-      res.status(403).send("Oops")
-  } 
+    }
+  } else {
+    res.status(403).send("Oops");
+  }
 });
 
 // the add new page rendered from urls_new, lets you access if you're signed in, otherwise redirects to login
 app.get("/urls/new", (req, res) => {
-  const user = users[req.session['user_id']]
+  const user = users[req.session['user_id']];
   let templateVars = { user };
   if (!user) {
     res.redirect('/login');
@@ -106,7 +105,7 @@ app.get('/u/:shortURL', (req, res) => {
     const longURL = urlDatabase[shortURL].longURL;
     res.redirect(longURL);
   } else {
-    res.status(404).send("uhoh 94")
+    res.status(404).send("uhoh 94");
   }
 });
 
@@ -117,7 +116,7 @@ app.get('/urls/:shortURL', (req, res) => {
   const definedURL = getUrl(shortURL, urlDatabase);
   const currentUser = users[req.session['user_id']];
   if (!definedURL) {
-    res.status(404).send("uhoh 124 short id doesnt exist")
+    res.status(404).send("short id doesnt exist");
   } else if (currentUser.id === urlDatabase[shortURL].userID && definedURL) {
     let templateVars = {
       shortURL,
@@ -126,7 +125,7 @@ app.get('/urls/:shortURL', (req, res) => {
     };
     res.render('urls_show', templateVars);
   } else {
-    res.status(404).send("You can't access someone else's links")
+    res.status(404).send("You can't access someone else's links");
   }
 });
 
@@ -144,8 +143,8 @@ app.post('/urls/:shortURL/', (req, res) => {
       urlDatabase[shortURL].longURL = longURL;
       res.redirect('/urls');
     }
-  };
-  res.status(404).send("uhoh 134")
+  }
+  res.status(404).send("uhoh 134");
 });
 // Delete an item from the db, only works if right client is logged in, otherwise send error message
 app.post('/urls/:shortURL/delete', (req, res) => {
@@ -155,14 +154,14 @@ app.post('/urls/:shortURL/delete', (req, res) => {
     delete urlDatabase[req.params.shortURL];
     res.redirect('/urls');
   } else {
-    res.status(404).send("You can't delete someone else's links")
+    res.status(404).send("You can't delete someone else's links");
   }
 });
 // log out and delete cookies
 app.post('/logout', (req, res) => {
   req.session = null;
-  res.redirect('/login')
-})
+  res.redirect('/login');
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
