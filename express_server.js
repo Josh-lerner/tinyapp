@@ -29,7 +29,7 @@ app.post("/register", (req, res) => {
   let { email, password } = req.body;
   const newUser = getUserByEmail(email, users);
   if (!newUser) {
-    req.session['user_id'] = addNewUser(email, password, users);
+    req.session['user_id'] = addNewUser(email, password, users); // sets cookie
     return res.redirect(`/login`)
   }
   res.status(403).send("That email is already in use")
@@ -73,37 +73,22 @@ app.get("/urls", (req, res) => {
     res.render("urls_index", templateVars);
   }
 });
-// creates a new short url tied to an inputed long url
+
+// uses addNewUrl function and then adds a random shorturl tied to an inputed long url into url database otherwise sends error message
 app.post("/urls", (req, res) => {
-  const newId = req.session['user_id'];
+  const newId = req.session['user_id']; 
   const longURL = req.body.longURL;
   if (Object.keys(users).includes(newId)) {
- if (longURL){
-  const newShort = addNewUrl(longURL, newId, urlDatabase);
-  res.redirect(`/urls/${newShort}`);
- } else {
-  res.status(403).send("Oops")
- }
-
-  } else {
-    res.status(403).send("back off")
-  }
-
+    if (longURL) {
+      const newShort = addNewUrl(longURL, newId, urlDatabase);
+      res.redirect(`/urls/${newShort}`);
+    } 
+    }else {
+      res.status(403).send("Oops")
+  } 
 });
 
-app.get('/u/:shortURL', (req, res) => {
-  const shortURL = req.params.shortURL;
-  if (getUrl(shortURL, urlDatabase)) {
-    const longURL =  urlDatabase[shortURL].longURL;
-    res.redirect(longURL);
-  } else {
-    res.status(404).send("uhoh 94")
-  }
-});
-
-
-
-// the add new page rendered from urls_new
+// the add new page rendered from urls_new, lets you access if you're signed in, otherwise redirects to login
 app.get("/urls/new", (req, res) => {
   const user = users[req.session['user_id']]
   let templateVars = { user };
@@ -114,7 +99,19 @@ app.get("/urls/new", (req, res) => {
   }
 });
 
-// the page for specific short urls, rendered from urls_show
+// if url for the id match redirect to longURL, otherwise send error
+app.get('/u/:shortURL', (req, res) => {
+  const shortURL = req.params.shortURL;
+  if (getUrl(shortURL, urlDatabase)) {
+    const longURL = urlDatabase[shortURL].longURL;
+    res.redirect(longURL);
+  } else {
+    res.status(404).send("uhoh 94")
+  }
+});
+
+// the page for specific short urls, rendered from urls_show, only accessible if logged in
+// otherwise send appropriate error messages
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const definedURL = getUrl(shortURL, urlDatabase);
@@ -129,35 +126,39 @@ app.get('/urls/:shortURL', (req, res) => {
     };
     res.render('urls_show', templateVars);
   } else {
-    res.status(404).send("You can't edit someone else's links")
+    res.status(404).send("You can't access someone else's links")
   }
 });
 
 
-// edit item 
+// update a previous url from the DB, only works if right client is logged in, send error message
 app.post('/urls/:shortURL/', (req, res) => {
   const shortURL = req.params.shortURL;
   const currentUser = req.session['user_id'];
   const longURL = req.body.longURL;
-  if (currentUser.id === urlDatabase[shortURL].userID) {
-    if (longURL){
-      urlDatabase[shortURL].longURL =longURL;
+  // console.log(shortURL)
+  // console.log(currentUser)
+  // console.log(longURL)
+  if (currentUser === urlDatabase[shortURL].userID) {
+    if (longURL) {
+      urlDatabase[shortURL].longURL = longURL;
       res.redirect('/urls');
-    }};
-    res.status(404).send("uhoh 138")
-  });
-  // Delete an item from the db
-  app.post('/urls/:shortURL/delete', (req, res) => {
-    const shortURL = req.params.shortURL;
-    const currentUser = users[req.session['user_id']];
-    if (currentUser.id === urlDatabase[shortURL].userID) {
-      delete urlDatabase[req.params.shortURL];
-      res.redirect('/urls');
-    } else {
-      res.status(404).send("You can't delete someone else's links")
     }
-  });
-  
+  };
+  res.status(404).send("uhoh 134")
+});
+// Delete an item from the db, only works if right client is logged in, otherwise send error message
+app.post('/urls/:shortURL/delete', (req, res) => {
+  const shortURL = req.params.shortURL;
+  const currentUser = users[req.session['user_id']];
+  if (currentUser.id === urlDatabase[shortURL].userID) {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect('/urls');
+  } else {
+    res.status(404).send("You can't delete someone else's links")
+  }
+});
+// log out and delete cookies
 app.post('/logout', (req, res) => {
   req.session = null;
   res.redirect('/login')
