@@ -44,7 +44,6 @@ app.post('/login', (req, res) => {
   let newUser = authenticateUser(email, password, users);
   if (newUser) {
     req.session['user_id'] = newUser.id;
-    console.log(newUser.id);
     res.redirect(`/urls`);
   } else {
     res.status(403).send("Wrong credentials");
@@ -135,9 +134,6 @@ app.post('/urls/:shortURL/', (req, res) => {
   const shortURL = req.params.shortURL;
   const currentUser = req.session['user_id'];
   const longURL = req.body.longURL;
-  // console.log(shortURL)
-  // console.log(currentUser)
-  // console.log(longURL)
   if (currentUser === urlDatabase[shortURL].userID) {
     if (longURL) {
       urlDatabase[shortURL].longURL = longURL;
