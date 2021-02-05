@@ -1,4 +1,4 @@
-const PORT = 8080; // default port 8080
+const PORT = process.env.PORT || 8080;
 
 const express = require("express");
 const app = express();
@@ -65,11 +65,9 @@ app.get("/urls", (req, res) => {
     userUrls: userDB,
     user: user
   };
-  if (!user) {
-    res.status(403).send("Error, please go register at /register, or sign in at /login");
-  } else {
+
     res.render("urls_index", templateVars);
-  }
+  
 });
 
 // uses addNewUrl function and then adds a random shorturl tied to an inputed long url into url database otherwise sends error message
@@ -82,7 +80,7 @@ app.post("/urls", (req, res) => {
       res.redirect(`/urls/${newShort}`);
     }
   } else {
-    res.status(403).send("Oops");
+    res.status(404).send("Error");
   }
 });
 
@@ -104,7 +102,7 @@ app.get('/u/:shortURL', (req, res) => {
     const longURL = urlDatabase[shortURL].longURL;
     res.redirect(longURL);
   } else {
-    res.status(404).send("uhoh 94");
+    res.status(404).send("error!");
   }
 });
 
@@ -140,7 +138,7 @@ app.post('/urls/:shortURL/', (req, res) => {
       res.redirect('/urls');
     }
   }
-  res.status(404).send("uhoh 134");
+  res.status(404).send("error");
 });
 // Delete an item from the db, only works if right client is logged in, otherwise send error message
 app.post('/urls/:shortURL/delete', (req, res) => {

@@ -5,7 +5,7 @@ const generateRandomString = function() {
   return Math.random().toString(36).substring(2, 8);
 };
 
-
+// returns specific user from user db using email
 const getUserByEmail = function(email, users) {
   for (const user in users) {
     if (users[user].email === email) {
@@ -13,11 +13,13 @@ const getUserByEmail = function(email, users) {
     }
   }
 };
+// checks registered hashed password and user to login password and user
 const authenticateUser = (email, password, users) => {
   const user = getUserByEmail(email, users);
   if ((user && bcrypt.compareSync(password, user.password)) || (user && password === user.password))
     return user;
   }
+// gets Urls if it matches the id of the person signed in
   const getUserUrls = (uniqueID, urlDatabase) => {
     const userDB = {};
     for (let shortURL in urlDatabase) {
@@ -28,6 +30,7 @@ const authenticateUser = (email, password, users) => {
     return userDB;
   };
 
+  // adds new user to the DB with a hashed password
 const addNewUser = (email, password, users) => {
   if (email && password && users) {
     const userID = generateRandomString();
@@ -42,7 +45,7 @@ const addNewUser = (email, password, users) => {
   }
 };
 
-
+// fetches url from the db that matches shorturl
 const getUrl = (shortURL, urlDatabase) => {
   for (let url in urlDatabase) {
     if (url === shortURL) {
@@ -50,6 +53,8 @@ const getUrl = (shortURL, urlDatabase) => {
     }
   }
 };
+
+// adds url to the db, generates random shorturl
 const addNewUrl = (longURL, userID, urlDatabase) => {
   if (longURL) {
     const shortURL = generateRandomString();
@@ -60,7 +65,6 @@ const addNewUrl = (longURL, userID, urlDatabase) => {
 
 
 module.exports = {
-  generateRandomString,
   getUserByEmail,
   addNewUser,
   authenticateUser,
