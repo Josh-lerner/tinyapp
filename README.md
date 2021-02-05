@@ -1,7 +1,7 @@
 # Josh Lerner's TinyApp Project
 
-TinyApp is a full stack web application built with Node and Express that allows users to shorten long URLs (à la bit.ly).
-Link to the demo in the about section!
+- TinyApp is a full stack web application built with Node and Express that allows users to shorten long URLs (à la bit.ly).
+- Link to the demo in the about section!
 
 ## Final Product
 
