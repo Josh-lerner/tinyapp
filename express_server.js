@@ -65,9 +65,7 @@ app.get("/urls", (req, res) => {
     userUrls: userDB,
     user: user
   };
-
     res.render("urls_index", templateVars);
-  
 });
 
 // uses addNewUrl function and then adds a random shorturl tied to an inputed long url into url database otherwise sends error message
