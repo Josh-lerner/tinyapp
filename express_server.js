@@ -29,7 +29,7 @@ app.post("/register", (req, res) => {
   const newUser = getUserByEmail(email, users);
   if (!newUser) {
     req.session['user_id'] = addNewUser(email, password, users); // sets cookie
-    return res.redirect(`/login`);
+    return res.redirect(`/urls`);
   }
   res.status(403).send("That email is already in use");
 });
@@ -156,5 +156,5 @@ app.post('/logout', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`Tinyapp listening on port ${PORT}!`);
 });
