@@ -4,21 +4,16 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-Registration Page
+!["Registration Page"](https://github.com/Josh-lerner/tinyapp/blob/main/docs/Register.png)
 
-https://user-images.githubusercontent.com/69250030/99019941-862f4b80-252b-11eb-9fc7-5d331ad23d59.png
+!["Login Page"](https://github.com/Josh-lerner/tinyapp/blob/main/docs/Login.png)
 
-Login page
 
-https://user-images.githubusercontent.com/69250030/99020021-ab23be80-252b-11eb-97ec-cf9e4c200723.png
+!["My Urls Page"](https://github.com/Josh-lerner/tinyapp/blob/main/docs/MyUrls.png)
 
-MyUrls page
 
-https://user-images.githubusercontent.com/69250030/99020106-ddcdb700-252b-11eb-9794-5d5aeb9d64b2.png
+!["Edit Page"](https://github.com/Josh-lerner/tinyapp/blob/main/docs/shorturl.png)
 
-Short url page
-
-https://user-images.githubusercontent.com/69250030/99020242-1077af80-252c-11eb-9f60-efd527abf2b7.png
 ## Dependencies
 
 - Node.js
