@@ -5,14 +5,16 @@
 
 ## Final Product
 
+ # Registration Page
 !["Registration Page"](https://github.com/Josh-lerner/tinyapp/blob/main/docs/Register.png)
 
+# Login Page
 !["Login Page"](https://github.com/Josh-lerner/tinyapp/blob/main/docs/Login.png)
 
-
+# My Urls Page
 !["My Urls Page"](https://github.com/Josh-lerner/tinyapp/blob/main/docs/MyUrls.png)
 
-
+# Edit Page
 !["Edit Page"](https://github.com/Josh-lerner/tinyapp/blob/main/docs/shorturl.png)
 
 ## Dependencies
