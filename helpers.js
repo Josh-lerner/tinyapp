@@ -1,5 +1,8 @@
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+const bcrypt = require('bcrypt-nodejs');
+const saltRounds = bcrypt.genSaltSync(10);
+
+
+
 
 const generateRandomString = function() {
   return Math.random().toString(36).substring(2, 8);
